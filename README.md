@@ -5,6 +5,14 @@ A Typescript express api for [Dule](https://github.com/withdule/dule)
 
 </div>
 
+## Project status
+- [x] Authentication
+- [ ] Events 
+- [ ] Reminders
+- [ ] Notes
+- [ ] Tasks
+- [ ] Tasklists
+
 ## Documentation
 
 ### Configuration
