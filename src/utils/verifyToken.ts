@@ -19,7 +19,7 @@ export default function (req: Request, res: Response, next: Function) {
         })
         next()
     } else {
-        res.json({
+        res.status(401).json({
             'message': 'Not authorized',
             'code': 401
         })

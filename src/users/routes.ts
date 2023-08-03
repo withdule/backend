@@ -17,7 +17,7 @@ router.post('/register', (req, res) => {
     }
     const insertedUser = usersFactory.register(user)
     jwt.sign({ user: insertedUser }, secret, (error: Error | null, token: string | undefined) => {
-        res.json({
+        res.status(201).json({
             'message': 'Account created successfully !',
             'code': 201,
             'data': {
@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
     const response = await usersFactory.authenticate(email, password)
     if (response.authenticated) {
         jwt.sign({ user: response.user }, secret, (error: Error | null, token: string | undefined) => {
-            res.json({
+            res.status(200).json({
                 'message': 'Successfully logged in',
                 'code': 200,
                 'data':  response.user,
@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
             })
         })
     } else {
-        res.json({
+        res.status(403).json({
             'message': 'Error: wrong password or email !',
             'code': 403
         })
@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/', verifyToken, (req, res) => {
     // const user = usersFactory.get()
-    res.send({
+    res.status(200).send({
         'message': 'Successfully retrieved your account',
         'code': 200,
         'data': req.body.user
