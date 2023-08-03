@@ -13,6 +13,7 @@ class Users {
     async authenticate(email: string, password: string): Promise<AuthenticationResponse>  {
         const user = await this.getUser(email)
         const authenticated = user.password == password
+        user.password = 'Removed'
         return { authenticated: authenticated, user: user }
     }
 
