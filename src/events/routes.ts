@@ -43,9 +43,6 @@ router.get('/', verifyToken, async (req, res) => {
 router.get('/:id', verifyToken, async (req, res) => {
     const event = await eventsFactory.get(req.params.id, req.body.user._id)
     if (event) {
-        // if (event.) {
-
-        // }
         res.status(200).json({
             'message': 'Event retrieved successfully',
             'code': 200,

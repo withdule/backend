@@ -72,11 +72,11 @@ class Events {
     }
 
     async delete(id: string, user: string): Promise<boolean> {
-        const event = await this.get(id, user) as Document & Event
+        const event = await this.get(id, user, true) as Document & Event
         if (!event) return false
 
         return await new Promise(resolve => {
-            this.db.destroy(event._id, event._rev, (err, body, headers) => {
+            this.db.destroy(id, event._rev, (err, body, headers) => {
                 if (body) resolve(body.ok)
                 resolve(false)
             })

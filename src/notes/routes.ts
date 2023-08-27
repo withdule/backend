@@ -40,19 +40,16 @@ router.get('/', verifyToken, async (req, res) => {
 })
 
 router.get('/:id', verifyToken, async (req, res) => {
-    const event = await notesFactory.get(req.params.id, req.body.user._id)
-    if (event) {
-        // if (event.) {
-
-        // }
+    const note = await notesFactory.get(req.params.id, req.body.user._id)
+    if (note) {
         res.status(200).json({
-            'message': 'Event retrieved successfully',
+            'message': 'Note retrieved successfully',
             'code': 200,
-            'data': event
+            'data': note
         })
     } else {
         res.status(404).json({
-            'message': 'Event not found',
+            'message': 'Note not found',
             'code': 404
         })
     }
@@ -60,21 +57,21 @@ router.get('/:id', verifyToken, async (req, res) => {
 
 
 router.patch('/:id', verifyToken, async (req, res) => {
-    const event = {
+    const note = {
         name: req.body['name'],
         content: req.body['content'],
         updatedAt: new Date()
     } as Note
-    const newNote = await notesFactory.update(req.params.id, event, req.body.user._id)
+    const newNote = await notesFactory.update(req.params.id, note, req.body.user._id)
     if (newNote) {
         res.status(200).json({
-            'message': 'Event modified successfully',
+            'message': 'Note modified successfully',
             'code': 200,
             'data': newNote
         })
     } else {
         res.status(404).json({
-            'message': 'Event not found or error occurred.',
+            'message': 'Note not found or error occurred.',
             'code': 404
         })
     }
@@ -82,15 +79,15 @@ router.patch('/:id', verifyToken, async (req, res) => {
 
 
 router.delete('/:id', verifyToken, async (req, res) => {
-    const eventDeleted = await notesFactory.delete(req.params.id, req.body.user._id)
-    if (eventDeleted) {
+    const noteDeleted = await notesFactory.delete(req.params.id, req.body.user._id)
+    if (noteDeleted) {
         res.status(200).json({
-            'message': 'Event deleted successfully',
+            'message': 'Note deleted successfully',
             'code': 200,
         })
     } else {
         res.status(404).json({
-            'message': 'Event not found or error occurred.',
+            'message': 'Note not found or error occurred.',
             'code': 404
         })
     }

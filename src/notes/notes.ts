@@ -71,11 +71,11 @@ class Notes {
     }
 
     async delete(id: string, user: string): Promise<boolean> {
-        const event = await this.get(id, user) as Document & Note
-        if (!event) return false
+        const note = await this.get(id, user, true) as Document & Note
+        if (!note) return false
 
         return await new Promise(resolve => {
-            this.db.destroy(event._id, event._rev, (err, body, headers) => {
+            this.db.destroy(id, note._rev, (err, body, headers) => {
                 if (body) resolve(body.ok)
                 resolve(false)
             })
