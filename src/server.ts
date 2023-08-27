@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import  { handleError, logRequest } from "./handleRequest"
 import usersRoutes from "./users/routes"
 import eventsRoutes from "./events/routes"
+import notesRoutes from "./notes/routes"
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.get('/', (_, res) => {
 
 app.use('/me', usersRoutes)
 app.use('/events', eventsRoutes)
+app.use('/notes', notesRoutes)
 
 
 app.listen(port, () => {

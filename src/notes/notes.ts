@@ -1,34 +1,33 @@
 
 import {DocumentScope, MangoQuery, Document} from "nano";
-import {Event, NewEvent} from "./interfaces";
+import {NewNote, Note} from "./interfaces";
 
-class Events {
+class Notes {
 
-    db: DocumentScope<Event>
+    db: DocumentScope<Note>
 
-    constructor(database: DocumentScope<Event>) {
+    constructor(database: DocumentScope<Note>) {
         this.db = database
     }
 
-    add(event: Event, user: string) {
-        const insertedEvent = {
-            name: event.name,
-            startsAt: event.startsAt,
-            endsAt: event.endsAt,
-            updatedAt: event.updatedAt,
+    add(note: Note, user: string) {
+        const insertedNote = {
+            name: note.name,
+            content: note.content,
+            updatedAt: note.updatedAt,
             user: user
-        } as NewEvent
-        this.db.insert(insertedEvent)
-        return event
+        } as NewNote
+        this.db.insert(insertedNote)
+        return note
     }
 
-    async get(id: string, user: string, rev: boolean = false): Promise<Event> {
+    async get(id: string, user: string, rev: boolean = false): Promise<Note> {
         const query = {
             selector: {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "name", "startsAt", "endsAt"] : ["_id", "updatedAt", "name", "startsAt", "endsAt"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "content"] : ["_id", "updatedAt", "name", "content"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -45,7 +44,7 @@ class Events {
             selector: {
                 user: user
             },
-            fields: ["_id", "updatedAt", "name", "startsAt", "endsAt"],
+            fields: ["_id", "updatedAt", "name", "content"],
             skip: 0,
             execution_stats: false
         } as MangoQuery
@@ -56,15 +55,15 @@ class Events {
         })
     }
 
-    async update(id: string, newEvent: Event, user: string): Promise<boolean> {
-        const event = await this.get(id, user, true) as Document & Event
-        if (!event) return false
+    async update(id: string, newNote: Note, user: string): Promise<boolean> {
+        const note = await this.get(id, user, true) as Document & Note
+        if (!note) return false
 
-        const insertedNewEvent = newEvent as Document & Event
-        insertedNewEvent._rev = event._rev
+        const insertedNewNote = newNote as Document & Note
+        insertedNewNote._rev = note._rev
 
         return await new Promise(resolve => {
-            this.db.insert(insertedNewEvent, id, (err, body, headers) => {
+            this.db.insert(insertedNewNote, id, (err, body, headers) => {
                 if (body) resolve(body.ok)
                 resolve(false)
             })
@@ -72,7 +71,7 @@ class Events {
     }
 
     async delete(id: string, user: string): Promise<boolean> {
-        const event = await this.get(id, user) as Document & Event
+        const event = await this.get(id, user) as Document & Note
         if (!event) return false
 
         return await new Promise(resolve => {
@@ -84,4 +83,4 @@ class Events {
     }
 }
 
-export default Events
+export default Notes

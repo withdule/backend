@@ -7,7 +7,7 @@ A Typescript express api for [Dule](https://github.com/withdule/dule)
 
 ## Project status
 - [x] Authentication
-- [ ] Events 
+- [ ] Notes 
 - [ ] Reminders
 - [ ] Notes
 - [ ] Tasks
