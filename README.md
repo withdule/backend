@@ -1,5 +1,9 @@
 <div align="center">
 
+<br>
+
+<img src=".github/icon.png" height="200"/>
+
 # Dule API
 A Typescript express api for [Dule](https://github.com/withdule/dule)
 
