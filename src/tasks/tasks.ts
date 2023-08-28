@@ -20,7 +20,15 @@ class Tasks {
             checked: false,
             user: user
         } as NewTask
-        this.db.insert(insertedTask)
+        this.db.insert(insertedTask, (err, res) => {
+            if (task.tasklist !== 'unordered') {
+                this.getTasklist(task.tasklist, user).then(tasklist => {
+                    tasklist.tasks.push(res.id)
+                    this.updateTasklist(task.tasklist, tasklist, user)
+                })
+            }
+        })
+
         return task
     }
 
@@ -54,10 +62,14 @@ class Tasks {
         let response = []
 
         allTasklist.forEach((tasklist: Tasklist) => {
-            let newTasklist = tasklist as any & FilledTasklist
-            newTasklist.tasks = []
-            tasklist.tasks.forEach(async task => {
-                newTasklist.tasks.push(await this.get(task, user))
+            let newTasklist = {
+                name: tasklist.name,
+                updatedAt: tasklist.updatedAt,
+                _id: tasklist._id,
+                tasks: []
+            } as any & FilledTasklist
+            tasklist.tasks.forEach(task => {
+               this.get(task, user).then(task => newTasklist.tasks.push(task))
             })
             response.push(newTasklist)
         })
@@ -73,7 +85,25 @@ class Tasks {
         return response
     }
 
-    async getTasklist(user: string, rev: boolean = false): Promise<Tasklist[]> {
+    async getTasklist(id: string, user: string, rev: boolean = false): Promise<Tasklist> {
+        const query = {
+            selector: {
+                _id: id,
+                user: user
+            },
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "tasks"] : ["_id", "updatedAt", "name", "tasks"],
+            skip: 0,
+            limit: 1,
+            execution_stats: false
+        } as MangoQuery
+        return await new Promise(resolve => {
+            this.tasklistDb.find(query, (err, body, headers) => {
+                resolve(body.docs[0])
+            })
+        })
+    }
+
+    async getUserTasklist(user: string, rev: boolean = false): Promise<Tasklist[]> {
         const query = {
             selector: {
                 user: user
@@ -126,6 +156,22 @@ class Tasks {
     }
 
 
+    async updateTasklist(id: string, newTasklist: Tasklist, user: string): Promise<boolean> {
+        const tasklist = await this.getTasklist(id, user, true) as Document & Tasklist
+        if (!tasklist) return false
+
+        const insertedNewTasklist = newTasklist as Document & Tasklist
+        insertedNewTasklist._rev = tasklist._rev
+        insertedNewTasklist.updatedAt = new Date()
+
+        return await new Promise(resolve => {
+            this.tasklistDb.insert(insertedNewTasklist, id, (err, body, headers) => {
+                if (body) resolve(body.ok)
+                resolve(false)
+            })
+        })
+    }
+
     async update(id: string, newTask: Task, user: string): Promise<boolean> {
         const task = await this.get(id, user, true) as Document & Task
         if (!task) return false
@@ -144,6 +190,12 @@ class Tasks {
     async delete(id: string, user: string): Promise<boolean> {
         const task = await this.get(id, user, true) as Document & Task
         if (!task) return false
+
+        if (task.tasklist !== 'unordered') {
+            const tasklist = await this.getTasklist(task.tasklist, user)
+            tasklist.tasks.splice(tasklist.tasks.indexOf(task._id), 1)
+            await this.updateTasklist(task.tasklist, tasklist, user)
+        }
 
         return await new Promise(resolve => {
             this.db.destroy(id, task._rev, (err, body, headers) => {

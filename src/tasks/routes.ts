@@ -54,7 +54,7 @@ router.post('/lists', verifyToken, async (req, res) => {
 })
 
 router.get('/lists', verifyToken, async (req, res) => {
-    const userTasklist = await tasksFactory.getTasklist(req.body.user._id)
+    const userTasklist = await tasksFactory.getUserTasklist(req.body.user._id)
     if (userTasklist) {
         res.status(200).json({
             'message': 'Tasklist retrieved successfully',

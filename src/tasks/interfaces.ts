@@ -17,6 +17,7 @@ interface Tasklist {
     name: string
     tasks: string[]
     updatedAt: Date
+    _id?: string
 }
 
 interface NewTasklist {
