@@ -69,6 +69,23 @@ router.get('/lists', verifyToken, async (req, res) => {
     }
 })
 
+
+router.delete('/lists/:id', verifyToken, async (req, res) => {
+    const tasklistDeleted = await tasksFactory.deleteTasklist(req.params.id, req.body.user._id)
+    if (tasklistDeleted) {
+        res.status(200).json({
+            'message': 'Tasklist deleted successfully',
+            'code': 200,
+            'data': tasklistDeleted
+        })
+    } else {
+        res.status(404).json({
+            'message': 'Tasklist not found or error occurred',
+            'code': 404
+        })
+    }
+})
+
 router.get('/:id', verifyToken, async (req, res) => {
     const task = await tasksFactory.get(req.params.id, req.body.user._id)
     if (task) {

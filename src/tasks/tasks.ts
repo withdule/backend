@@ -187,6 +187,22 @@ class Tasks {
         })
     }
 
+    async deleteTasklist(id: string, user: string): Promise<boolean> {
+        const tasklist = await this.getTasklist(id, user, true) as Document & Tasklist
+        if (!tasklist) return false
+
+        for (const task of tasklist.tasks) {
+            await this.delete(task, user)
+        }
+
+        return await new Promise(resolve => {
+            this.tasklistDb.destroy(id, tasklist._rev, (err, body, headers) => {
+                if (body) resolve(body.ok)
+                resolve(false)
+            })
+        })
+    }
+
     async delete(id: string, user: string): Promise<boolean> {
         const task = await this.get(id, user, true) as Document & Task
         if (!task) return false
