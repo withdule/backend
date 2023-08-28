@@ -11,6 +11,12 @@ interface NewUser {
     fullname: string
 }
 
+interface UpdateUser {
+    email: string
+    password: string
+    fullname: string
+}
+
 interface AuthenticationResponse {
     authenticated: boolean
     user: User
@@ -19,5 +25,6 @@ interface AuthenticationResponse {
 export type {
     User,
     NewUser,
+    UpdateUser,
     AuthenticationResponse
 }

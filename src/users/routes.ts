@@ -3,6 +3,7 @@ import express from "express";
 import Users from "./users";
 import couchDB from "../utils/database"
 import verifyToken from "../utils/verifyToken";
+import {UpdateUser} from "./interfaces";
 
 const secret = process.env.SECRET as Secret
 const router = express.Router()
@@ -50,12 +51,31 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/', verifyToken, (req, res) => {
-    // const user = usersFactory.get()
     res.status(200).send({
         'message': 'Successfully retrieved your account',
         'code': 200,
         'data': req.body.user
     })
+})
+
+router.patch('/', verifyToken, async (req, res) => {
+    const user = {
+        email: req.body['email'],
+        fullname: req.body['fullname']
+    } as UpdateUser
+    const updatedUser = await usersFactory.update(req.body['email'], user, req.body.user._id)
+    if (updatedUser) {
+        res.status(200).json({
+            'message': 'User modified successfully',
+            'code': 200,
+            'data': updatedUser
+        })
+    } else {
+        res.status(404).json({
+            'message': 'User not found or error occurred.',
+            'code': 404
+        })
+    }
 })
 
 export default router
