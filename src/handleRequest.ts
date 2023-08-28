@@ -7,10 +7,10 @@ function logRequest(req: Request, res: Response, next: NextFunction) {
 }
 
 
-function handleError(err: Error, req: Request, res: Response, next: NextFunction) {
-    console.log(err)
-    if (err) {
-        console.log(`💥 [server] ERROR ${err.name}: ${err.message} ${err.stack}`)
+function handleError(error: Error, req: Request, res: Response, next: NextFunction) {
+    console.log(error)
+    if (error) {
+        console.log(`💥 [server] ERROR ${error.name}: ${error.message}`)
         res.json({
             'message': 'Something went wrong with the server. Are the field filled correctly ?',
             code: 500

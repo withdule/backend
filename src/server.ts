@@ -18,7 +18,6 @@ app.use(cors())
 const port = process.env.PORT
 
 app.use('/', logRequest)
-app.use(handleError)
 app.get('/', (_, res) => {
     res.send({
         'message': 'Welcome on Dule API',
@@ -29,7 +28,7 @@ app.get('/', (_, res) => {
 app.use('/me', usersRoutes)
 app.use('/events', eventsRoutes)
 app.use('/notes', notesRoutes)
-
+app.use(handleError)
 
 app.listen(port, () => {
     console.log(`🚀 [server] API is running at http://localhost:${port}`)
