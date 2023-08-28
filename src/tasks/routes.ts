@@ -39,7 +39,7 @@ router.get('/', verifyToken, async (req, res) => {
     }
 })
 
-router.get('/lists', verifyToken, async (req, res) => {
+router.post('/lists', verifyToken, async (req, res) => {
     const tasklist = {
         name: req.body['name'],
         updatedAt: new Date(),
@@ -53,7 +53,7 @@ router.get('/lists', verifyToken, async (req, res) => {
     })
 })
 
-router.post('/lists', verifyToken, async (req, res) => {
+router.get('/lists', verifyToken, async (req, res) => {
     const userTasklist = await tasksFactory.getTasklist(req.body.user._id)
     if (userTasklist) {
         res.status(200).json({
