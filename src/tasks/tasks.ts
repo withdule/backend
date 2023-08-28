@@ -147,7 +147,6 @@ class Tasks {
             },
             fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
             skip: 0,
-            limit: 1,
             execution_stats: false
         } as MangoQuery
         return await new Promise(resolve => {
