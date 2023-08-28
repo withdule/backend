@@ -1,12 +1,14 @@
 interface Task {
     content: string
     updatedAt: Date
+    checked: boolean
     tasklist: string
 }
 
 interface NewTask {
     content: string
     updatedAt: Date
+    checked: boolean
     tasklist: string
     user: string
 }

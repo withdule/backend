@@ -24,7 +24,7 @@ router.post('/', verifyToken, (req, res) => {
 
 
 router.get('/', verifyToken, async (req, res) => {
-    const tasks = await tasksFactory.getAllTasklist(req.body.user._id)
+    const tasks = await tasksFactory.getFilledTasklist(req.body.user._id)
     if (tasks) {
         res.status(200).json({
             'message': 'Tasks retrieved successfully',
@@ -34,6 +34,22 @@ router.get('/', verifyToken, async (req, res) => {
     } else {
         res.status(204).json({
             'message': 'No tasks found',
+            'code': 204
+        })
+    }
+})
+
+router.get('/lists', verifyToken, async (req, res) => {
+    const userTasklist = await tasksFactory.getTasklist(req.body.user._id)
+    if (userTasklist) {
+        res.status(200).json({
+            'message': 'Tasklist retrieved successfully',
+            'code': 200,
+            'data': userTasklist
+        })
+    } else {
+        res.status(204).json({
+            'message': 'No tasklist not found',
             'code': 204
         })
     }
@@ -60,6 +76,7 @@ router.patch('/:id', verifyToken, async (req, res) => {
     const task = {
         content: req.body['content'],
         tasklist: req.body['tasklist'],
+        checked: req.body['checked'],
         updatedAt: new Date()
     } as Task
     const newTask = await tasksFactory.update(req.params.id, task, req.body.user._id)

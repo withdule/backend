@@ -17,6 +17,7 @@ class Tasks {
             content: task.content,
             tasklist: task.tasklist,
             updatedAt: task.updatedAt,
+            checked: false,
             user: user
         } as NewTask
         this.db.insert(insertedTask)
@@ -34,7 +35,7 @@ class Tasks {
         return tasklist
     }
 
-    async getAllTasklist(user: string) {
+    async getFilledTasklist(user: string) {
         const tasklistQuery = {
             selector: {
                 user: user
@@ -72,13 +73,29 @@ class Tasks {
         return response
     }
 
+    async getTasklist(user: string, rev: boolean = false): Promise<Tasklist[]> {
+        const query = {
+            selector: {
+                user: user
+            },
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "tasks"] : ["_id", "updatedAt", "name", "tasks"],
+            skip: 0,
+            execution_stats: false
+        } as MangoQuery
+        return await new Promise(resolve => {
+            this.tasklistDb.find(query, (err, body, headers) => {
+                resolve(body.docs)
+            })
+        })
+    }
+
     async get(id: string, user: string, rev: boolean = false): Promise<Task> {
         const query = {
             selector: {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content"] : ["_id", "updatedAt", "tasklist", "content"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -96,7 +113,7 @@ class Tasks {
                 user: user,
                 tasklist: 'unordered'
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content"] : ["_id", "updatedAt", "tasklist", "content"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -109,16 +126,15 @@ class Tasks {
     }
 
 
-    // TODO
-    async update(id: string, newNote: Task, user: string): Promise<boolean> {
-        const note = await this.get(id, user, true) as Document & Task
-        if (!note) return false
+    async update(id: string, newTask: Task, user: string): Promise<boolean> {
+        const task = await this.get(id, user, true) as Document & Task
+        if (!task) return false
 
-        const insertedNewNote = newNote as Document & Task
-        insertedNewNote._rev = note._rev
+        const insertedNewTask = newTask as Document & Task
+        insertedNewTask._rev = task._rev
 
         return await new Promise(resolve => {
-            this.db.insert(insertedNewNote, id, (err, body, headers) => {
+            this.db.insert(insertedNewTask, id, (err, body, headers) => {
                 if (body) resolve(body.ok)
                 resolve(false)
             })
@@ -126,11 +142,11 @@ class Tasks {
     }
 
     async delete(id: string, user: string): Promise<boolean> {
-        const note = await this.get(id, user, true) as Document & Task
-        if (!note) return false
+        const task = await this.get(id, user, true) as Document & Task
+        if (!task) return false
 
         return await new Promise(resolve => {
-            this.db.destroy(id, note._rev, (err, body, headers) => {
+            this.db.destroy(id, task._rev, (err, body, headers) => {
                 if (body) resolve(body.ok)
                 resolve(false)
             })
