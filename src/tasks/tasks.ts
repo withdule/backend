@@ -61,22 +61,24 @@ class Tasks {
 
         let response = []
 
-        allTasklist.forEach((tasklist: Tasklist) => {
+        for (const tasklist of allTasklist) {
             let newTasklist = {
                 name: tasklist.name,
                 updatedAt: tasklist.updatedAt,
                 _id: tasklist._id,
                 tasks: []
             } as any & FilledTasklist
-            tasklist.tasks.forEach(task => {
-               this.get(task, user).then(task => newTasklist.tasks.push(task))
-            })
+            for (const task of tasklist.tasks) {
+               const taskObject = await this.get(task, user)
+                newTasklist.tasks.push(taskObject)
+            }
             response.push(newTasklist)
-        })
+        }
 
         const unorderedTasklist = {
             name: "Unordered",
             tasks: await this.getUnorderedTasks(user),
+            _id: 'unordered',
             updatedAt: new Date()
         } as FilledTasklist
 
@@ -187,12 +189,13 @@ class Tasks {
         })
     }
 
+    // TODO : Bug; need two execution to delete completely the tasklist
     async deleteTasklist(id: string, user: string): Promise<boolean> {
         const tasklist = await this.getTasklist(id, user, true) as Document & Tasklist
         if (!tasklist) return false
 
         for (const task of tasklist.tasks) {
-            await this.delete(task, user)
+            await this.delete(task, user, true)
         }
 
         return await new Promise(resolve => {
@@ -203,11 +206,11 @@ class Tasks {
         })
     }
 
-    async delete(id: string, user: string): Promise<boolean> {
+    async delete(id: string, user: string, ignoreTasklist: boolean = false): Promise<boolean> {
         const task = await this.get(id, user, true) as Document & Task
         if (!task) return false
 
-        if (task.tasklist !== 'unordered') {
+        if (task.tasklist !== 'unordered' && ! ignoreTasklist) {
             const tasklist = await this.getTasklist(task.tasklist, user)
             tasklist.tasks.splice(tasklist.tasks.indexOf(task._id), 1)
             await this.updateTasklist(task.tasklist, tasklist, user)
