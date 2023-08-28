@@ -6,6 +6,7 @@ import  { handleError, logRequest } from "./handleRequest"
 import usersRoutes from "./users/routes"
 import eventsRoutes from "./events/routes"
 import notesRoutes from "./notes/routes"
+import tasksRoutes from "./tasks/routes"
 
 dotenv.config()
 
@@ -28,6 +29,7 @@ app.get('/', (_, res) => {
 app.use('/me', usersRoutes)
 app.use('/events', eventsRoutes)
 app.use('/notes', notesRoutes)
+app.use('/tasks', tasksRoutes)
 app.use(handleError)
 
 app.listen(port, () => {
