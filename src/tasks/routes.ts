@@ -2,7 +2,7 @@ import express from "express";
 import Tasks from "./tasks";
 import couchDB from "../utils/database"
 import verifyToken from "../utils/verifyToken";
-import { Task } from "./interfaces";
+import {Task, Tasklist} from "./interfaces";
 
 const router = express.Router()
 const tasksFactory = new Tasks(couchDB.db.use('tasks'), couchDB.db.use('tasklist'))
@@ -40,6 +40,20 @@ router.get('/', verifyToken, async (req, res) => {
 })
 
 router.get('/lists', verifyToken, async (req, res) => {
+    const tasklist = {
+        name: req.body['name'],
+        updatedAt: new Date(),
+        tasks: []
+    } as Tasklist
+    const insertedTasklist = tasksFactory.addTasklist(tasklist, req.body.user._id)
+    res.status(201).json({
+        'message': 'Tasklist created successfully',
+        'code': 201,
+        'data': insertedTasklist
+    })
+})
+
+router.post('/lists', verifyToken, async (req, res) => {
     const userTasklist = await tasksFactory.getTasklist(req.body.user._id)
     if (userTasklist) {
         res.status(200).json({
