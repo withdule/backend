@@ -1,13 +1,15 @@
 
-import {Document, DocumentScope, MangoQuery} from "nano";
+import {DatabaseScope, Document, DocumentScope, MangoQuery} from "nano";
 import {AuthenticationResponse, NewUser, UpdateUser, User} from "./interfaces";
 
 class Users {
 
     db: DocumentScope<User>
+    dbDriver: DatabaseScope
 
-    constructor(database: DocumentScope<User>) {
+    constructor(database: DocumentScope<User>, driver: DatabaseScope) {
         this.db = database
+        this.dbDriver = driver
     }
 
     async authenticate(email: string, password: string): Promise<AuthenticationResponse>  {
@@ -43,6 +45,62 @@ class Users {
                 resolve(body.docs[0])
             })
         })
+    }
+
+    async getStatistics(user: string) {
+        const notesBase = this.dbDriver.use('notes')
+        const tasksBase = this.dbDriver.use('tasks')
+        const eventsBase = this.dbDriver.use('events')
+
+        const query = {
+            selector: {
+                user: user
+            },
+            skip: 0,
+            limit: 1,
+            execution_stats: false
+        }
+
+        const completedTasksQuery = {
+            selector: {
+                user: user,
+                checked: true
+            },
+            skip: 0,
+            limit: 1,
+            execution_stats: false
+        }
+
+        const notesNumber = await new Promise(resolve => {
+            notesBase.find(query, (err, body, headers) => {
+                resolve(body.docs.length)
+            })
+        })
+
+        const tasksNumber = await new Promise(resolve => {
+            tasksBase.find(query, (err, body, headers) => {
+                resolve(body.docs.length)
+            })
+        })
+
+        const tasksCompletedNumber = await new Promise(resolve => {
+            tasksBase.find(completedTasksQuery, (err, body, headers) => {
+                resolve(body.docs.length)
+            })
+        })
+
+        const eventsNumber = await new Promise(resolve => {
+            eventsBase.find(query, (err, body, headers) => {
+                resolve(body.docs.length)
+            })
+        })
+
+        return {
+            'notes': notesNumber,
+            'events': eventsNumber,
+            'tasks': tasksNumber,
+            'tasksCompleted': tasksCompletedNumber
+        }
     }
 
     async update(email: string, newUser: UpdateUser, id: string): Promise<boolean> {

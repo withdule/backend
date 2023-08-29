@@ -7,7 +7,7 @@ import {UpdateUser} from "./interfaces";
 
 const secret = process.env.SECRET as Secret
 const router = express.Router()
-const usersFactory = new Users(couchDB.db.use('users'))
+const usersFactory = new Users(couchDB.db.use('users'), couchDB.db)
 
 
 router.post('/register', (req, res) => {
@@ -78,6 +78,15 @@ router.patch('/', verifyToken, async (req, res) => {
             'code': 404
         })
     }
+})
+
+router.get('/stats', verifyToken, async (req, res) => {
+    const statistics = await usersFactory.getStatistics(req.body.user._id)
+    res.status(200).send({
+        'message': 'Successfully retrieved your account statistics',
+        'code': 200,
+        'data': statistics
+    })
 })
 
 export default router
