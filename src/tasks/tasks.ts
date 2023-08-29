@@ -6,10 +6,22 @@ class Tasks {
 
     db: DocumentScope<Task>
     tasklistDb: DocumentScope<Tasklist>
+    indexId: string
 
     constructor(database: DocumentScope<Task>, tasklistDatabase: DocumentScope<Tasklist>) {
         this.db = database
         this.tasklistDb = tasklistDatabase
+        this.indexId = ""
+        this.tasklistDb.createIndex({
+            name: 'chrono-order',
+            type: 'json',
+            index: {
+                fields: ['updatedAt', 'name']
+            }
+        },
+        (err, response) => {
+            this.indexId = response.id
+        })
     }
 
     add(task: Task, user: string) {
@@ -50,6 +62,8 @@ class Tasks {
             },
             fields: ["_id", "updatedAt", "tasks", "name"],
             skip: 0,
+            sort: ["updatedAt", "name"],
+            use_index: this.indexId,
             execution_stats: false
         } as MangoQuery
         const allTasklist = await new Promise(resolve => {
