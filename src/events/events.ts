@@ -5,9 +5,21 @@ import {Event, NewEvent} from "./interfaces";
 class Events {
 
     db: DocumentScope<Event>
+    indexId: string
 
     constructor(database: DocumentScope<Event>) {
         this.db = database
+        this.indexId = ""
+        this.db.createIndex({
+            name: 'chrono-order',
+            type: 'json',
+            index: {
+                fields: ['startsAt', 'endsAt']
+            }
+        },
+        (err, response) => {
+            this.indexId = response.id
+        })
     }
 
     add(event: Event, user: string) {
@@ -46,7 +58,9 @@ class Events {
                 user: user
             },
             fields: ["_id", "updatedAt", "name", "startsAt", "endsAt"],
+            sort: ["startsAt", "endsAt"],
             skip: 0,
+            use_index: this.indexId,
             execution_stats: false
         } as MangoQuery
         return await new Promise(resolve => {
