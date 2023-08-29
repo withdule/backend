@@ -3,15 +3,17 @@ import Notes from "./notes";
 import couchDB from "../utils/database"
 import verifyToken from "../utils/verifyToken";
 import { Note } from "./interfaces";
+import sanitizeHtml from 'sanitize-html';
 
 const router = express.Router()
 const notesFactory = new Notes(couchDB.db.use('notes'))
 
 
 router.post('/', verifyToken, (req, res) => {
+    const noteContent = sanitizeHtml(req.body['content'])
     const note = {
         name: req.body['name'],
-        content: req.body['content'],
+        content: noteContent,
         updatedAt: new Date()
     } as Note
     const insertedNote = notesFactory.add(note, req.body.user._id)

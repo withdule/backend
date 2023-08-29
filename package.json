@@ -22,11 +22,13 @@
   "homepage": "https://github.com/withdule/backend#readme",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/sanitize-html": "^2.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
-    "nano": "^10.1.2"
+    "nano": "^10.1.2",
+    "sanitize-html": "^2.11.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
