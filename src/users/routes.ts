@@ -54,7 +54,9 @@ router.get('/', verifyToken, (req, res) => {
     res.status(200).send({
         'message': 'Successfully retrieved your account',
         'code': 200,
-        'data': req.body.user
+        'data': {
+            'user': req.body.user
+        }
     })
 })
 
