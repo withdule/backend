@@ -5,9 +5,21 @@ import {NewNote, Note} from "./interfaces";
 class Notes {
 
     db: DocumentScope<Note>
+    indexId: string
 
     constructor(database: DocumentScope<Note>) {
         this.db = database
+        this.indexId = ''
+        this.db.createIndex({
+                name: 'chrono-order',
+                type: 'json',
+                index: {
+                    fields: ['updatedAt', 'name']
+                }
+            },
+            (err, response) => {
+                this.indexId = response.id
+            })
     }
 
     add(note: Note, user: string) {
@@ -45,6 +57,8 @@ class Notes {
                 user: user
             },
             fields: ["_id", "updatedAt", "name", "content"],
+            sort: ['updatedAt', 'name'],
+            use_index: this.indexId,
             skip: 0,
             execution_stats: false
         } as MangoQuery
