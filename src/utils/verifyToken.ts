@@ -14,7 +14,8 @@ export default function (req: Request, res: Response, next: Function) {
                     'code': 403
                 })
             } else {
-                req.body.user = data
+                // @ts-ignore - Data will always be JwtPayload here
+                req.body.user = data['user']
             }
         })
         next()
