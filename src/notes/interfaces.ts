@@ -2,6 +2,7 @@ interface Note {
     name: string
     content: string
     updatedAt: Date
+    user?: string
 }
 
 interface NewNote {

@@ -22,7 +22,7 @@ class Tasks {
         } as NewTask
         this.db.insert(insertedTask, (err, res) => {
             if (task.tasklist !== 'unordered') {
-                this.getTasklist(task.tasklist, user).then(tasklist => {
+                this.getTasklist(task.tasklist, user, true).then(tasklist => {
                     tasklist.tasks.push(res.id)
                     this.updateTasklist(task.tasklist, tasklist, user)
                 })
@@ -93,7 +93,7 @@ class Tasks {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "name", "tasks"] : ["_id", "updatedAt", "name", "tasks"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "tasks", "user"] : ["_id", "updatedAt", "name", "tasks"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -127,7 +127,7 @@ class Tasks {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked", "user"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -145,7 +145,7 @@ class Tasks {
                 user: user,
                 tasklist: 'unordered'
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "tasklist", "content", "checked", "user"] : ["_id", "updatedAt", "tasklist", "content", "checked"],
             skip: 0,
             execution_stats: false
         } as MangoQuery
@@ -163,6 +163,7 @@ class Tasks {
 
         const insertedNewTasklist = newTasklist as Document & Tasklist
         insertedNewTasklist._rev = tasklist._rev
+        insertedNewTasklist.user = tasklist.user
         insertedNewTasklist.updatedAt = new Date()
 
         return await new Promise(resolve => {
@@ -179,6 +180,7 @@ class Tasks {
 
         const insertedNewTask = newTask as Document & Task
         insertedNewTask._rev = task._rev
+        insertedNewTask.user = task.user
 
         return await new Promise(resolve => {
             this.db.insert(insertedNewTask, id, (err, body, headers) => {

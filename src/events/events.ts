@@ -28,7 +28,7 @@ class Events {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "name", "startsAt", "endsAt"] : ["_id", "updatedAt", "name", "startsAt", "endsAt"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "startsAt", "endsAt", "user"] : ["_id", "updatedAt", "name", "startsAt", "endsAt"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -62,6 +62,7 @@ class Events {
 
         const insertedNewEvent = newEvent as Document & Event
         insertedNewEvent._rev = event._rev
+        insertedNewEvent.user = event.user
 
         return await new Promise(resolve => {
             this.db.insert(insertedNewEvent, id, (err, body, headers) => {

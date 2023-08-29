@@ -3,6 +3,7 @@ interface Task {
     updatedAt: Date
     checked: boolean
     tasklist: string
+    user?: string
 }
 
 interface NewTask {
@@ -18,6 +19,7 @@ interface Tasklist {
     tasks: string[]
     updatedAt: Date
     _id?: string
+    user?: string
 }
 
 interface NewTasklist {

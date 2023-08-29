@@ -27,7 +27,7 @@ class Notes {
                 _id: id,
                 user: user
             },
-            fields: rev ? ["_id", "_rev", "updatedAt", "name", "content"] : ["_id", "updatedAt", "name", "content"],
+            fields: rev ? ["_id", "_rev", "updatedAt", "name", "content", "user"] : ["_id", "updatedAt", "name", "content"],
             skip: 0,
             limit: 1,
             execution_stats: false
@@ -61,6 +61,7 @@ class Notes {
 
         const insertedNewNote = newNote as Document & Note
         insertedNewNote._rev = note._rev
+        insertedNewNote.user = note.user
 
         return await new Promise(resolve => {
             this.db.insert(insertedNewNote, id, (err, body, headers) => {

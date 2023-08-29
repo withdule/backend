@@ -3,6 +3,7 @@ interface Event {
     startsAt: string
     endsAt: string
     updatedAt: Date
+    user?: string
 }
 
 interface NewEvent {
