@@ -210,7 +210,6 @@ class Tasks {
         })
     }
 
-    // TODO : Bug; need two execution to delete completely the tasklist
     async deleteTasklist(id: string, user: string): Promise<boolean> {
         const tasklist = await this.getTasklist(id, user, true) as Document & Tasklist
         if (!tasklist) return false
