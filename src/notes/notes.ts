@@ -11,18 +11,18 @@ class Notes {
         this.db = database
         this.indexId = ''
         this.db.createIndex({
-                name: 'chrono-order',
-                type: 'json',
-                index: {
-                    fields: [
-                        {'updatedAt': 'desc'},
-                        {'name': 'desc'}
-                    ]
-                }
-            },
-            (err, response) => {
-                this.indexId = response.id
-            })
+            name: 'chrono-order',
+            type: 'json',
+            index: {
+                fields: [
+                    {'updatedAt': 'desc'},
+                    {'name': 'desc'}
+                ]
+            }
+        },
+        (err, response) => {
+            this.indexId = response.id
+        })
     }
 
     add(note: Note, user: string) {
