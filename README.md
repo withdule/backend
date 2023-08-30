@@ -10,14 +10,14 @@ A Typescript express api for [Dule](https://github.com/withdule/dule)
 </div>
 
 ## Project status
-> [!IMPORTANT]     
->  Some features like anti-chrono order are not operational in crossed categories.
 - [x] Authentication
 - [x] Notes 
 - [x] Events
 - [x] Tasks
 - [x] Tasklists
 - [ ] Reminders
+- [ ] Incoming events
+- [ ] Recently edited
 
 ## Documentation
 
