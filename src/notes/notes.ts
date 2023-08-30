@@ -14,7 +14,10 @@ class Notes {
                 name: 'chrono-order',
                 type: 'json',
                 index: {
-                    fields: ['updatedAt', 'name']
+                    fields: [
+                        {'updatedAt': 'desc'},
+                        {'name': 'desc'}
+                    ]
                 }
             },
             (err, response) => {
@@ -57,7 +60,10 @@ class Notes {
                 user: user
             },
             fields: ["_id", "updatedAt", "name", "content"],
-            sort: ['updatedAt', 'name'],
+            sort: [
+                {'updatedAt': 'desc'},
+                {'name': 'desc'}
+            ],
             use_index: this.indexId,
             skip: 0,
             execution_stats: false

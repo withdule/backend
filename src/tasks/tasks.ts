@@ -16,7 +16,10 @@ class Tasks {
             name: 'chrono-order',
             type: 'json',
             index: {
-                fields: ['updatedAt', 'name']
+                fields: [
+                    {'updatedAt': 'desc'},
+                    {'name': 'desc'}
+                ]
             }
         },
         (err, response) => {
@@ -62,7 +65,10 @@ class Tasks {
             },
             fields: ["_id", "updatedAt", "tasks", "name"],
             skip: 0,
-            sort: ["updatedAt", "name"],
+            sort: [
+                {'updatedAt': 'desc'},
+                {'name': 'desc'}
+            ],
             use_index: this.indexId,
             execution_stats: false
         } as MangoQuery
