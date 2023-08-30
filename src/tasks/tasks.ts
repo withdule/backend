@@ -96,7 +96,7 @@ class Tasks {
             updatedAt: new Date()
         } as FilledTasklist
 
-        response.push(unorderedTasklist)
+        response.unshift(unorderedTasklist)
 
         return response
     }
