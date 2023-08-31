@@ -57,7 +57,6 @@ class Users {
                 user: user
             },
             skip: 0,
-            limit: 1,
             execution_stats: false
         }
 
@@ -67,7 +66,6 @@ class Users {
                 checked: true
             },
             skip: 0,
-            limit: 1,
             execution_stats: false
         }
 
