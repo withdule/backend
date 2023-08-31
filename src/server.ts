@@ -7,6 +7,7 @@ import usersRoutes from "./users/routes"
 import eventsRoutes from "./events/routes"
 import notesRoutes from "./notes/routes"
 import tasksRoutes from "./tasks/routes"
+import activityRoutes from "./activity/routes"
 
 dotenv.config()
 
@@ -30,6 +31,7 @@ app.use('/me', usersRoutes)
 app.use('/events', eventsRoutes)
 app.use('/notes', notesRoutes)
 app.use('/tasks', tasksRoutes)
+app.use('/activity', activityRoutes)
 app.use(handleError)
 
 app.listen(port, () => {
