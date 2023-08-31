@@ -17,7 +17,7 @@ A Typescript express api for [Dule](https://github.com/withdule/dule)
 - [x] Tasklists
 - [x] Incoming events
 - [x] Recently edited
-- [ ] Reminders (see frontend [dev/reminders](https://github.com/withdule/dule/tree/dev/reminders))
+- [x] Reminders
 
 ## Documentation
 
