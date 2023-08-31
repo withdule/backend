@@ -3,14 +3,15 @@ import Activity from "./activity";
 import couchDB from "../utils/database"
 import verifyToken from "../utils/verifyToken";
 import {DocumentScope} from "nano";
-import {Tasklist} from "../tasks/interfaces";
+import {Task, Tasklist} from "../tasks/interfaces";
 import {Note} from "../notes/interfaces";
 
 const router = express.Router()
 const eventsDb = couchDB.db.use('events') as DocumentScope<Event>
 const tasklistDb = couchDB.db.use('tasklist') as DocumentScope<Tasklist>
 const notesDb = couchDB.db.use('notes') as DocumentScope<Note>
-const activityFactory = new Activity(eventsDb, tasklistDb, notesDb)
+const tasksDb = couchDB.db.use('tasks') as DocumentScope<Task>
+const activityFactory = new Activity(eventsDb, tasklistDb, notesDb, tasksDb)
 
 router.get('/incoming', verifyToken, async (req, res) => {
     const incomingEvents = await activityFactory.getIncomingEvents(req.body.user._id)
